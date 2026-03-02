@@ -1,0 +1,23 @@
+<div class="col-md-6">
+  <h2>Edit Todo</h2>
+  <form method="POST" action="/todos/<%= todo.id %>/update">
+    <div class="mb-3">
+      <label class="form-label">Title</label>
+      <input
+        name="title"
+        class="form-control"
+        value="<%= todo.title %>"
+        required
+      />
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Description</label>
+      <textarea
+        name="description"
+        class="form-control"
+        value="<%= todo.description %>"
+      ></textarea>
+    </div>
+    <button class="btn btn-secondary">Update</button>
+  </form>
+</div>

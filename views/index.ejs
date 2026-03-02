@@ -1,0 +1,74 @@
+<div class="row">
+  <div class="col-md-6">
+    <h2>Create Todo</h2>
+    <form method="POST" action="/todos">
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input name="title" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea name="description" class="form-control"></textarea>
+      </div>
+      <button class="btn btn-primary">Add</button>
+    </form>
+  </div>
+
+  <div class="col-md-6">
+    <hr/>
+    <h2>Todos</h2>
+    <hr/>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <a href="?status=all" class="btn btn-sm btn-outline-secondary">All</a>
+        <a href="?status=done" class="btn btn-sm btn-outline-success">Done</a>
+        <a href="?status=pending" class="btn btn-sm btn-outline-warning">Pending</a>
+      </div>
+      <nav>
+        <ul class="pagination">
+          <% for(let i = 1; i <= totalPages; i++) { %>
+            <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+              <a class="page-link" href="?page=<%= i %>&status=<%= status %>"><%= i %></a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+    </div>
+    <ul class="list-group">
+      <% if (todos.length !== 0) { %>
+        <% for(const todo of todos) { %>
+          <li class="list-group-item">
+            <strong
+            class="<% if (todo.done) { %>text-decoration-line-through<% } %>"
+            >
+            <%= todo.title %>
+          </strong>
+            <p
+            class="<% if (todo.done) { %>text-decoration-line-through<% } %>"
+            style="white-space: pre-line;"
+            >
+            <%= todo.description %>
+          </p>
+            <div class="container-fluid">
+              <label for="done" class="btn btn-outline-success">Toggle Done</label>
+                <input
+                type="checkbox"
+                id="done"
+                <% if (todo.done) { %>
+                  checked
+                <% } %>
+                hidden
+                onchange="alert('Toggled!!!')"
+                >
+                <a href="/todos/<%= todo.id %>/edit" class="btn btn-outline-warning">Edit</a>
+                <form method="POST" action="/todos/<%= todo.id %>/delete" style="display:inline;">
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+            </div>
+          </li>
+      <% }} else { %>
+        <li class="list-group-item">No todos found</li>
+      <% } %>
+    </ul>
+  </div>
+</div>

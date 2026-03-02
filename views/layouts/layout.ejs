@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Todo App - <%= title %></title>
+  <link href="/css/Bootstrap-v5.3.8.min.css" rel="stylesheet" />
+  <link href="/css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+  <header id="header">
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">Todo App</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+          aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <% if (currentUser) { %>
+              <li class="nav-item">
+                <a class="nav-link <% if (activeLink === '/todos') { %>active<% } %>"
+                  aria-current="<% if (activeLink === '/todos') { %>page<% } %>" href="/todos">
+                  My Todos
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/auth/logout">Logout</a>
+              </li>
+            <% } else { %>
+              <li class="nav-item">
+                <a class="nav-link <% if (activeLink === '/auth/login') { %>active<% } %>"
+                  aria-current="<% if (activeLink === '/auth/login') { %>page<% } %>" href="/auth/login">
+                  Login
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link <% if (activeLink === '/auth/register') { %>active<% } %>"
+                  aria-current="<% if (activeLink === '/auth/register') { %>page<% } %>" href="/auth/register">
+                  Register
+                </a>
+              </li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container mx-4 my-4">
+    <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer">
+      <% Object.keys(messages).forEach(type => { %>
+        <% 
+          // Map your messages types to Bootstrap colors and icons
+          const config = {
+            success: { color: 'text-bg-success', icon: 'bi-check-circle-fill' },
+            error:   { color: 'text-bg-danger',  icon: 'bi-exclamation-triangle-fill' },
+            warning: { color: 'text-bg-warning', icon: 'bi-exclamation-circle-fill' },
+            info:    { color: 'text-bg-info',    icon: 'bi-info-circle-fill' }
+          }[type] || { color: 'text-bg-primary', icon: 'bi-bell-fill' };
+        %>
+
+        <% messages[type].forEach(message => { %>
+          <div class="toast align-items-center <%= config.color %> border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+              <div class="toast-body d-flex align-items-center">
+                <i class="<%= config.icon %> me-2 fs-5"></i>
+                <%= message %>
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-progress"></div>
+          </div>
+        <% }) %>
+      <% }) %>
+    </div>
+
+    <%- body %>
+  </main>
+
+  <script src="/js/jQuery-v3.7.1.min.js"></script>
+  <script src="/js/Bootstrap-v5.3.8.bundle.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+
+</html>
