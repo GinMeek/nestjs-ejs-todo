@@ -1,4 +1,5 @@
 <div class="row">
+  <h1>Welcome <span class="text-capitalize"><%= currentUser.username %></span></h1>
   <div class="col-md-6">
     <h2>Create Todo</h2>
     <form method="POST" action="/todos">
@@ -41,29 +42,27 @@
             <strong
             class="<% if (todo.done) { %>text-decoration-line-through<% } %>"
             >
-            <%= todo.title %>
-          </strong>
+              <%= todo.title %>
+            </strong>
             <p
-            class="<% if (todo.done) { %>text-decoration-line-through<% } %>"
-            style="white-space: pre-line;"
+              class="<% if (todo.done) { %>text-decoration-line-through<% } %>"
+              style="white-space: pre-line;"
             >
-            <%= todo.description %>
-          </p>
+              <%= todo.description %>
+            </p>
             <div class="container-fluid">
-              <label for="done" class="btn btn-outline-success">Toggle Done</label>
-                <input
-                type="checkbox"
-                id="done"
-                <% if (todo.done) { %>
-                  checked
-                <% } %>
-                hidden
-                onchange="alert('Toggled!!!')"
+              <form method="POST" action="/todos/<%= todo.id %>/toggle" style="display:inline;">
+                <button
+                  type="submit"
+                  class="<% if (todo.done) { %>btn btn-outline-success<% } else { %>btn btn-outline-info<% } %>"
                 >
-                <a href="/todos/<%= todo.id %>/edit" class="btn btn-outline-warning">Edit</a>
-                <form method="POST" action="/todos/<%= todo.id %>/delete" style="display:inline;">
-                    <button type="submit" class="btn btn-outline-danger">Delete</button>
-                </form>
+                  <% if (todo.done) { %>✅ done<% } else { %>Toggle done<% } %>
+                </button>
+              </form>
+              <a href="/todos/<%= todo.id %>/edit" class="btn btn-outline-warning">Edit</a>
+              <form method="POST" action="/todos/<%= todo.id %>/delete" style="display:inline;">
+                <button type="submit" class="btn btn-outline-danger">Delete</button>
+              </form>
             </div>
           </li>
       <% }} else { %>

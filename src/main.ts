@@ -1,53 +1,28 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { NextFunction, Request, Response } from 'express';
-import passport from 'passport';
-import session from 'express-session';
 import expressLayouts from 'express-ejs-layouts';
 import { join } from 'path';
 import { AppModule } from './app.module';
-import { User } from './user/user.entity';
-import { FlashInterceptor } from './common/interceptors/flash.interceptor';
+import { sessionMiddleware } from './middlewares/session.middleware';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const port = process.env.PORT ?? 3000;
 
+  // 1. Global Pipes & Interceptors
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
+
+  // 2. Assets & View Engine
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setViewEngine('ejs');
-
-  // Enable layouts
-  app.set('layout', 'layouts/layout'); // Use 'layouts/layout.ejs' as the default layout
   app.use(expressLayouts);
+  app.set('layout', 'layouts/layout');
 
-  app.use(
-    session({
-      name: 'TODO_SESSION_ID',
-      secret: 'your-secret-key',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        maxAge: 3600000 * 24, // 1 day
-        secure: false,
-        httpOnly: true,
-        sameSite: 'lax',
-      }, // Optional cookie settings
-    }),
-  );
+  // 3. Session & Passport are configured in AppModule with custom middleware
+  sessionMiddleware(app);
 
-  app.use(passport.initialize());
-  app.use(passport.session());
-
-  app.useGlobalInterceptors(new FlashInterceptor());
-
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    res.locals.currentUser = (req.user as Partial<User>) || null;
-    res.locals.activeLink = req.path;
-    next();
-  });
-
+  // 4. Start Server
+  const port = process.env.PORT ?? 3000;
   await app.listen(port);
   console.log(`Application is running on port ${port}`);
 }

@@ -16,7 +16,6 @@ export class SessionSerializer extends PassportSerializer {
     user: UserPayload,
     done: (err: Error | null, id: number) => void,
   ) {
-    console.log('Inside SessionSerializer.serializeUser');
     done(null, user.id);
   }
 
@@ -25,7 +24,6 @@ export class SessionSerializer extends PassportSerializer {
     payload: UserPayload,
     done: (err: Error | null, user?: UserPayload | null) => void,
   ) {
-    console.log('Inside SessionSerializer.deserializeUser');
     const user = await this.userService.findById(payload.id);
     if (!user) {
       done(new Error('User not found'), null);

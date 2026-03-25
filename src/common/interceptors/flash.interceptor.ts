@@ -10,15 +10,17 @@ import { Observable } from 'rxjs';
 @Injectable()
 export class FlashInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const ctx = context.switchToHttp();
-    const request: Request = ctx.getRequest();
-    const response: Response = ctx.getResponse();
-
-    // Default structure to avoid frontend errors
-    const defaultFlash = { success: [], error: [], info: [] };
+    const http = context.switchToHttp();
+    const request: Request = http.getRequest();
+    const response: Response = http.getResponse();
 
     // Merge actual session flash into the defaults
-    response.locals.messages = { ...defaultFlash, ...request.session.flash };
+    response.locals.messages = {
+      success: request.session.flash?.success || [],
+      error: request.session.flash?.error || [],
+      info: request.session.flash?.info || [],
+      warning: request.session.flash?.warning || [],
+    };
 
     // Clear session
     delete request.session.flash;

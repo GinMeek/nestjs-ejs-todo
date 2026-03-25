@@ -21,7 +21,7 @@ export class TodoService {
   }
 
   findOne(id: number) {
-    return this.repo.findOneBy({ id });
+    return this.repo.findOne({ where: { id }, relations: { user: true } });
   }
 
   async findByUser(user: User) {
@@ -37,9 +37,8 @@ export class TodoService {
   }
 
   async findOneForUser(id: number, userId: number) {
-    console.log(id, typeof id, userId, typeof userId);
     const todo = await this.findOne(id);
-    console.log(todo?.user, typeof todo?.user.id);
+
     if (!todo || todo?.user.id !== userId)
       throw new Error('Not found or unauthorized');
     return todo;
@@ -56,9 +55,12 @@ export class TodoService {
     const todo = await this.repo.findOne({
       where: { id, user: { id: userId } },
     });
+
     if (!todo) throw new NotFoundException();
     todo.done = !todo.done;
-    return this.repo.save(todo);
+    const newTodo = await this.repo.save(todo);
+
+    return newTodo;
   }
 
   async removeForUser(id: number, userId: number) {
